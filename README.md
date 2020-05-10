@@ -17,7 +17,7 @@ xjnac,星杰网络存取控制,主要功能有:
 1.  下载: git clone https://gitee.com/xjieinfo/xjnac.git
 2.  cd xjnac
 3.  go build
-4.  windows下运行 ./xjnac.exe ；linux下运行 ./xjnac
+4.  windows下运行 xjnac.exe ；linux下运行 ./xjnac
 
 #### 使用说明
 
