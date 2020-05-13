@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	profile = flag.String("profile", "dev", "profile: dev,test,prod")
+	profile = flag.String("profile", "", "profile: dev,test,prod")
 	//ui             = flag.String("ui", "ui/dist", "The gateway ui dist dir.")
 	//addrProxy      = flag.String("addrProxy", "127.0.0.1:81", "AddrProxy: http request entrypoint")
 	version = flag.Bool("version", false, "Show version info")
