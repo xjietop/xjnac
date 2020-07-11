@@ -59,3 +59,30 @@ func EtcdGet(endpoints []string, key string) map[string]string {
 	}
 	return m
 }
+
+func EtcdDel(endpoints []string, key string) (bool, error) {
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		fmt.Println("connect failed, err:", err)
+		return false, err
+	}
+
+	//fmt.Println("connect succ")
+	defer cli.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	//resp, err := cli.Get(ctx, key)
+	resp, err := cli.Delete(ctx, key)
+	//resp, err := cli.Get(ctx, key, clientv3.WithPrefix())
+	cancel()
+	if err != nil {
+		fmt.Println("delete failed, err:", err)
+		return false, err
+	}
+	if resp.Deleted > 0 {
+		return true, nil
+	}
+	return false, nil
+}

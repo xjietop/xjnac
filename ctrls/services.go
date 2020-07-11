@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//服务列表
 func ServicesList(ctx *gin.Context) {
 	spage := ctx.DefaultQuery("current", "1")
 	ssize := ctx.DefaultQuery("size", "20")
@@ -40,4 +41,35 @@ func ServicesList(ctx *gin.Context) {
 		Page.Pages = Page.Total/size + 1
 	}
 	ctx.JSON(200, new(models.R).Success(Page))
+}
+
+//检查服务健康情况
+func ServiceHealth(ctx *gin.Context) {
+	url := ctx.DefaultQuery("url", "")
+	url = "http://" + url + "/health"
+	str, err := util.HttpGetStr(url)
+	if err != nil {
+		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		return
+	}
+	ctx.JSON(200, new(models.R).Success(str))
+}
+
+//删除服务
+func ServiceDel(ctx *gin.Context) {
+	name := ctx.DefaultQuery("name", "")
+	url := ctx.DefaultQuery("url", "")
+
+	key := "services/" + name + "/" + url
+	endpoints := util.Conf.App.Etcdurl
+	ok, err := util.EtcdDel(endpoints, key)
+	if err != nil {
+		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		return
+	}
+	if !ok {
+		ctx.JSON(200, new(models.R).Fail("fail"))
+		return
+	}
+	ctx.JSON(200, new(models.R).Success("ok"))
 }

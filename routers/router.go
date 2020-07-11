@@ -36,7 +36,11 @@ func SetupRouter() *gin.Engine {
 	})
 	Router.GET("/code", ctrls.GetCheckCode)
 	Router.GET("/proxy_error", ctrls.ProxyError)
-	Router.GET("/ServicesList", ctrls.ServicesList)
+	Router.GET("/ServicesList", ctrls.ServicesList)   //服务列表
+	Router.GET("/ServiceHealth", ctrls.ServiceHealth) //检查服务健康情况
+	Router.DELETE("/ServiceDel", ctrls.ServiceDel)    //删除服务
+
+	Router.GET("/RpcxList", ctrls.RpcxList) //rpcx服务列表
 
 	Router.GET("/config/list", ctrls.ConfigList)
 	Router.GET("/config/add", ctrls.ConfigAdd)

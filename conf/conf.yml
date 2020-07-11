@@ -4,7 +4,7 @@ app:
 #  appname: xjie-nac
 #  username: xjie
 #  password: xjie
-  proxyport: 8850
+  proxyport: 9999
   etcdurl:
     - 127.0.0.1:2379
 
