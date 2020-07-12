@@ -1,47 +1,36 @@
 package ctrls
 
 import (
-	"strconv"
-	"time"
-	"unsafe"
-
+	"gitee.com/xjieinfo/xjnac/mapper"
 	"gitee.com/xjieinfo/xjnac/models"
 	"gitee.com/xjieinfo/xjnac/util"
+	"gitee.com/xjieinfo/xjnac/util/entity"
+	e_pub "gitee.com/xjieinfo/xjnac/util/entity"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"strconv"
+	"time"
 )
 
 func ConfigList(ctx *gin.Context) {
-	spage := ctx.DefaultQuery("current", "1")
+	scurrent := ctx.DefaultQuery("current", "1")
 	ssize := ctx.DefaultQuery("size", "20")
-	page, _ := strconv.Atoi(spage)
+	current, _ := strconv.Atoi(scurrent)
 	size, _ := strconv.Atoi(ssize)
-	//where := ctx.DefaultQuery("where", "")
-	configs := make([]models.Txjconfig, 0)
-	start := (page - 1) * size
-	err := util.Db.Limit(size, start).Find(&configs)
-	if err != nil {
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
-		return
-	}
+	where := ctx.DefaultQuery("where", "")
 
-	config := new(models.Txjconfig)
-	total, err := util.Db.Count(config)
+	var wrapper e_pub.QueryWrapper
+	wrapper.Current = current
+	wrapper.Size = size
+	wrapper.Where = "data_id like concat('%',?,'%')"
+	wrapper.Args = []interface{}{where}
+	wrapper.Orderby = "data_id"
+	Page, err := mapper.TxjconfigMapper{}.SelectPage(wrapper)
 	if err != nil {
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 		return
 	}
-	Page := new(models.Page)
-	Page.Records = configs
-	Page.Size = size
-	Page.Total = *(*int)(unsafe.Pointer(&total))
-	Page.Current = page
-	if Page.Total%size == 0 {
-		Page.Pages = Page.Total / size
-	} else {
-		Page.Pages = Page.Total/size + 1
-	}
-	ctx.JSON(200, new(models.R).Success(Page))
+	ctx.JSON(200, new(e_pub.R).Success(Page))
 }
 
 func ConfigAdd(ctx *gin.Context) {
@@ -59,11 +48,11 @@ func ConfigAdd(ctx *gin.Context) {
 	n, err := util.Db.Insert(config)
 	if err != nil {
 		//fmt.Println(err)
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 	} else if n > 0 {
-		ctx.JSON(200, new(models.R).Success("ok"))
+		ctx.JSON(200, new(entity.R).Success("ok"))
 	} else {
-		ctx.JSON(200, new(models.R).Fail("fail"))
+		ctx.JSON(200, new(entity.R).Fail("fail"))
 	}
 }
 
@@ -74,11 +63,11 @@ func ConfigView(ctx *gin.Context) {
 	has, err := util.Db.ID(Id).Get(config)
 	if err != nil {
 		//fmt.Println(err)
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 	} else if has {
-		ctx.JSON(200, new(models.R).Success(config))
+		ctx.JSON(200, new(entity.R).Success(config))
 	} else {
-		ctx.JSON(200, new(models.R).Fail("fail"))
+		ctx.JSON(200, new(entity.R).Fail("fail"))
 	}
 }
 
@@ -88,11 +77,11 @@ func GetConfig(ctx *gin.Context) {
 	has, err := util.Db.Get(config)
 	if err != nil {
 		//fmt.Println(err)
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 	} else if has {
-		ctx.JSON(200, new(models.R).Success(config.Content))
+		ctx.JSON(200, new(entity.R).Success(config.Content))
 	} else {
-		ctx.JSON(200, new(models.R).Fail("fail"))
+		ctx.JSON(200, new(entity.R).Fail("fail"))
 	}
 }
 
@@ -111,11 +100,11 @@ func ConfigUpdate(ctx *gin.Context) {
 	n, err := util.Db.ID(config.Id).Update(config)
 	if err != nil {
 		//fmt.Println(err)
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 	} else if n > 0 {
-		ctx.JSON(200, new(models.R).Success("ok"))
+		ctx.JSON(200, new(entity.R).Success("ok"))
 	} else {
-		ctx.JSON(200, new(models.R).Fail("fail"))
+		ctx.JSON(200, new(entity.R).Fail("fail"))
 	}
 }
 
@@ -125,10 +114,10 @@ func ConfigDelete(ctx *gin.Context) {
 	Id, _ := strconv.Atoi(sId)
 	has, err := util.Db.ID(Id).Get(config)
 	if err != nil {
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 		return
 	} else if !has {
-		ctx.JSON(200, new(models.R).Fail("fail"))
+		ctx.JSON(200, new(entity.R).Fail("fail"))
 		return
 	}
 	configDel := new(models.TxjconfigDel)
@@ -146,13 +135,13 @@ func ConfigDelete(ctx *gin.Context) {
 	configDel.GmtDeleted = time.Now()
 	_, err = util.Db.Insert(configDel)
 	if err != nil {
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 	} else {
 		_, err = util.Db.ID(config.Id).Delete(config)
 		if err != nil {
-			ctx.JSON(200, new(models.R).Fail(err.Error()))
+			ctx.JSON(200, new(entity.R).Fail(err.Error()))
 		} else {
-			ctx.JSON(200, new(models.R).Success("ok"))
+			ctx.JSON(200, new(entity.R).Success("ok"))
 		}
 	}
 }

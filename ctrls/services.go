@@ -1,12 +1,13 @@
 package ctrls
 
 import (
-	"strconv"
-	"strings"
-
 	"gitee.com/xjieinfo/xjnac/models"
 	"gitee.com/xjieinfo/xjnac/util"
+	"gitee.com/xjieinfo/xjnac/util/entity"
+	e_pub "gitee.com/xjieinfo/xjnac/util/entity"
 	"github.com/gin-gonic/gin"
+	"strconv"
+	"strings"
 )
 
 //服务列表
@@ -30,17 +31,18 @@ func ServicesList(ctx *gin.Context) {
 	models.SortSrv(srvs, func(p, q *models.Srv) bool {
 		return p.Name < q.Name // Name 递增排序
 	})
-	Page := new(models.Page)
-	Page.Records = srvs
-	Page.Size = size
-	Page.Total = len(srvs)
-	Page.Current = page
-	if Page.Total%size == 0 {
-		Page.Pages = Page.Total / size
-	} else {
-		Page.Pages = Page.Total/size + 1
-	}
-	ctx.JSON(200, new(models.R).Success(Page))
+	Page := new(e_pub.Page)
+	Page.MakePage(srvs, page, size, int64(len(srvs)))
+	//Page.Records = srvs
+	//Page.Size = size
+	//Page.Total = len(srvs)
+	//Page.Current = page
+	//if Page.Total%size == 0 {
+	//	Page.Pages = Page.Total / size
+	//} else {
+	//	Page.Pages = Page.Total/size + 1
+	//}
+	ctx.JSON(200, new(entity.R).Success(Page))
 }
 
 //检查服务健康情况
@@ -49,10 +51,10 @@ func ServiceHealth(ctx *gin.Context) {
 	url = "http://" + url + "/health"
 	str, err := util.HttpGetStr(url)
 	if err != nil {
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 		return
 	}
-	ctx.JSON(200, new(models.R).Success(str))
+	ctx.JSON(200, new(entity.R).Success(str))
 }
 
 //删除服务
@@ -64,12 +66,12 @@ func ServiceDel(ctx *gin.Context) {
 	endpoints := util.Conf.App.Etcdurl
 	ok, err := util.EtcdDel(endpoints, key)
 	if err != nil {
-		ctx.JSON(200, new(models.R).Fail(err.Error()))
+		ctx.JSON(200, new(entity.R).Fail(err.Error()))
 		return
 	}
 	if !ok {
-		ctx.JSON(200, new(models.R).Fail("fail"))
+		ctx.JSON(200, new(entity.R).Fail("fail"))
 		return
 	}
-	ctx.JSON(200, new(models.R).Success("ok"))
+	ctx.JSON(200, new(entity.R).Success("ok"))
 }

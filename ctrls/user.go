@@ -2,6 +2,7 @@ package ctrls
 
 import (
 	"encoding/json"
+	"gitee.com/xjieinfo/xjnac/util/entity"
 
 	"gitee.com/xjieinfo/xjnac/dto"
 	"gitee.com/xjieinfo/xjnac/models"
@@ -18,16 +19,16 @@ func XjieLogin(ctx *gin.Context) {
 	captchaid := ctx.DefaultQuery("captchaid", "")
 	println(username + " " + password + " " + code + " " + captchaid)
 	if !captcha.VerifyString(captchaid, code) {
-		ctx.JSON(200, new(models.R).Fail("验证码不正确"))
+		ctx.JSON(200, new(entity.R).Fail("验证码不正确"))
 		return
 	}
 	if username == "" || password == "" {
-		ctx.JSON(200, new(models.R).Fail("用户名和密码必须输入"))
+		ctx.JSON(200, new(entity.R).Fail("用户名和密码必须输入"))
 		return
 	}
 	has, xjUser := models.GetUser(username, password)
 	if !has {
-		ctx.JSON(200, new(models.R).Fail("用户名或密码不正确"))
+		ctx.JSON(200, new(entity.R).Fail("用户名或密码不正确"))
 		return
 	}
 	u1 := uuid.NewV4()
@@ -56,7 +57,7 @@ func XjieLogin(ctx *gin.Context) {
 	xjUser.Admin_club = []int{1, 2, 3}
 	xjUser.Dept_id = 27
 	xjUser.Username = "ZIY00000907"
-	ctx.JSON(200, new(models.R).Success(xjUser))
+	ctx.JSON(200, new(entity.R).Success(xjUser))
 }
 
 func XjieUserInfo(ctx *gin.Context) {
@@ -251,14 +252,14 @@ func XjieUserInfo(ctx *gin.Context) {
 		powers = session.Get("powers").([]string)
 	}
 	userInfoDto.Permissions = powers
-	ctx.JSON(200, new(models.R).Success(userInfoDto))
+	ctx.JSON(200, new(entity.R).Success(userInfoDto))
 }
 
 func XjieLogout(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Clear()
 	session.Save()
-	ctx.JSON(200, new(models.R).Success(true))
+	ctx.JSON(200, new(entity.R).Success(true))
 }
 
 //func XjieUserList(ctx *gin.Context){

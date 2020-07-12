@@ -37,6 +37,7 @@ func init() {
 	}
 
 	util.OrmInit()
+	util.Gorm = util.GormInit()
 
 	ServerList = make(map[string][]*url.URL)
 	//fmt.Println(utils.Conf.Local.Etcdurl)
