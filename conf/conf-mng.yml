@@ -1,16 +1,24 @@
+#register:
+#  url: 127.0.0.1
+#  port: 8849
+#
+#config:
+#  url: 127.0.0.1
+#  port: 8849
+
 app:
-  url: 127.0.0.1
+  url: 172.25.240.25
   port: 8849
 #  appname: xjie-nac
 #  username: xjie
 #  password: xjie
-  proxyport: 9998
+  proxyport: 9999
   etcdurl:
     - 127.0.0.1:2379
 
 datasource:
   drivername: mysql
-  url: 127.0.0.1
+  url: 172.25.240.17
   port: 3306
   username: root
   password: root

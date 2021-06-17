@@ -1,3 +1,11 @@
+#register:
+#  url: 127.0.0.1
+#  port: 8849
+#
+#config:
+#  url: 127.0.0.1
+#  port: 8849
+
 app:
   url: 127.0.0.1
   port: 8849

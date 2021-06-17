@@ -7,19 +7,19 @@
 #  port: 8849
 
 app:
-  url: 127.0.0.1
+  url: 192.168.15.118
   port: 8849
 #  appname: xjie-nac
 #  username: xjie
 #  password: xjie
-  proxyport: 8850
+  proxyport: 9999
   etcdurl:
     - 127.0.0.1:2379
 
 datasource:
   drivername: mysql
-  url: 127.0.0.1
-  port: 3306
+  url: 192.168.15.106
+  port: 3307
   username: root
   password: root
   database: nac_config
