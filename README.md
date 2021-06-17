@@ -14,7 +14,7 @@ xjnac,星杰网络存取控制,主要功能有:
 
 #### 安装教程
 0.  安装好mysql数据，并启动etcd
-1.  下载: git clone https://gitee.com/xjieinfo/xjnac.git
+1.  下载: git clone https://github.com/xjietop/xjnac.git
 2.  cd xjnac
 3.  go build
 4.  windows下运行 xjnac.exe ；linux下运行 ./xjnac
